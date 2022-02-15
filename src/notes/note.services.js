@@ -28,6 +28,11 @@ class NoteServices {
 
     }
 
+    async getNotes() {
+        const result = await this._poll.query('SELECT * FROM notes');
+        return result.rows;
+    }
+
 }
 
 module.exports = NoteServices;
