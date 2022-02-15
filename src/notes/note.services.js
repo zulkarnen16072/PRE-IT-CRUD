@@ -33,6 +33,22 @@ class NoteServices {
         return result.rows;
     }
 
+
+    async getNotesByID(noteID) {
+        const query = {
+            query: 'SELECT * FROM notes WHERE id = $1',
+            values: [noteID]
+        }
+
+        const result = await this._poll.query(query);
+
+        if (!result.rows.length) {
+            throw new Error('Note tidak ditemukan')
+        }
+
+        return result.rows[0];
+    }
+
 }
 
 module.exports = NoteServices;
