@@ -1,7 +1,5 @@
 /* eslint-disable camelcase */
 
-const { PgType } = require("node-pg-migrate");
-
 exports.shorthands = undefined;
 
 exports.up = pgm => {
@@ -18,11 +16,11 @@ exports.up = pgm => {
             type: 'TEXT',
             notNull: true
         },
-        createAt: {
+        createdAt: {
             type: 'TEXT',
             notNull: true
         },
-        createAt: {
+        updatedAt: {
             type: 'TEXT',
             notNull: true
         },
