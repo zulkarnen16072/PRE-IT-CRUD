@@ -7,9 +7,9 @@ route.post('/notes', async(req, res) => {
 
     const {title, body} = req.body;
 
-    await noteServices.addNote({title, body})
+    const result = await noteServices.addNote({title, body})
     
-    res.json('Create a new note successfully')
+    res.json(result)
 
 });
 
@@ -20,8 +20,29 @@ route.get('/notes', async (req, res) => {
 
 });
 
-// route.get('/notes/:notesID', (req, res) => {
 
-// });
+route.get('/notes/:notesID', async (req, res) => {
+
+    const noteID = req.params.notesID;
+
+    console.info(noteID)
+
+    try {
+
+        const noteByID = await noteServices.getNotesByID(noteID);
+        res.json(noteByID)
+
+    } catch(e) {
+
+        res.status(404)
+        res.json({error: e.message})
+
+    }
+
+    
+
+   
+
+});
 
 module.exports = route;
