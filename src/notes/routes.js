@@ -35,7 +35,13 @@ route.get('/notes/:notesID', async (req, res) => {
     } catch(e) {
 
         res.status(404)
-        res.json({error: e.message})
+        res.json({
+            
+            code: 404,
+            error: 'not found',
+            message: e.message,
+
+        })
 
     }
 
