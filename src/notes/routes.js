@@ -25,8 +25,6 @@ route.get('/notes/:notesID', async (req, res) => {
 
     const noteID = req.params.notesID;
 
-    console.info(noteID)
-
     try {
 
         const noteByID = await noteServices.getNotesByID(noteID);
@@ -44,10 +42,21 @@ route.get('/notes/:notesID', async (req, res) => {
         })
 
     }
+});
 
-    
 
-   
+
+route.put('/notes/:id', async (req, res) => {
+
+    console.log('Hello Mother')
+
+
+    const noteID = req.params.id;
+    console.info(noteID)
+    const {title, body} = req.body;
+    const result = await noteServices.updateNoteByID(noteID, {title, body})
+    console.info(result)
+    res.json(result);
 
 });
 
