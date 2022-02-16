@@ -1,4 +1,5 @@
 const { nanoid } = require("nanoid");
+const { renameFunction } = require("node-pg-migrate/dist/operations/functions");
 const { Pool } = require("pg");
 
 class NoteServices {
@@ -69,6 +70,22 @@ class NoteServices {
         }
 
         
+    }
+
+
+    async deleteNoteByID(noteID) {
+        
+        const query = `DELETE FROM notes WHERE id=${noteID}`,
+
+        const result = await this._poll.query(query);
+
+        if(!result.rowCount) {
+            throw new Error('delete note failure')
+        }
+
+
+
+
     }
 
 
