@@ -52,6 +52,26 @@ class NoteServices {
 
     }
 
+
+    async updateNoteByID(noteID, {title, body}) {
+
+        const updatedAt = new Date().toISOString();
+
+        const query = {
+            text: 'UPDATE FROM notes SET title=$1, body=$2, updatedAt=$3 WHERE id = $4 RETURNING id',
+            values: [title, body, updatedAt,  noteID]
+        }
+
+        const result = await this._poll.query(query);
+
+        if (!result.rowCount) {
+            throw new Error(`Note tidak dapat diubah, ${noteID} tidak ditemukan`)
+        }
+
+        
+    }
+
+
 }
 
 module.exports = NoteServices;
