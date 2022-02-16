@@ -48,16 +48,33 @@ route.get('/notes/:notesID', async (req, res) => {
 
 route.put('/notes/:id', async (req, res) => {
 
-    console.log('Hello Mother')
-
-
     const noteID = req.params.id;
-    console.info(noteID)
     const {title, body} = req.body;
+
     const result = await noteServices.updateNoteByID(noteID, {title, body})
-    console.info(result)
+    
     res.json(result);
 
 });
+
+
+
+route.delete('/notes/:noteID', async(req, res) => {
+
+    const noteID = req.params.noteID;
+
+    try {
+        
+        const result = await noteServices.deleteNoteByID(noteID);
+        console.info(result)
+        res.json({message: `note dengan judul ${result} berhasil dihapus`})
+
+    } catch (e) {
+
+        res.status(404)
+        res.json({message: e.message})
+    }
+
+})
 
 module.exports = route;
