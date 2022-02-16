@@ -10,7 +10,7 @@ class NoteServices {
     async addNote({title, body}) {
         
         const id = `note-${nanoid(16)}`;
-        const createdAt = new Date().toISOString();
+        const createdAt = new Date().toLocaleString("id-ID");;
         const updatedAt = createdAt;
 
         const query = {
@@ -55,7 +55,7 @@ class NoteServices {
 
     async updateNoteByID(noteID, {title, body}) {
 
-        const updatedAt = new Date().toISOString();
+        const updatedAt = new Date().toLocaleString("id-ID");
 
         const query = {
             text: 'UPDATE notes SET title=$1, body=$2, updated_at=$3 WHERE id = $4 RETURNING id',
