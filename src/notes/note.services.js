@@ -58,13 +58,13 @@ class NoteServices {
         const updatedAt = new Date().toISOString();
 
         const query = {
-            text: 'UPDATE FROM notes SET title=$1, body=$2, updatedAt=$3 WHERE id = $4 RETURNING id',
-            values: [title, body, updatedAt,  noteID]
+            text: 'UPDATE notes SET title=$1, body=$2, updated_at=$3 WHERE id = $4 RETURNING id',
+            values: [title, body, updatedAt, noteID]
         }
 
         const result = await this._poll.query(query);
 
-        if (!result.rowCount) {
+        if (!result.rows.length) {
             throw new Error(`Note tidak dapat diubah, ${noteID} tidak ditemukan`)
         }
 
