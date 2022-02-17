@@ -6,17 +6,50 @@ const noteServices = new NoteServices();
 route.post('/notes', async(req, res) => {
 
     const {title, body} = req.body;
-
-    const result = await noteServices.addNote({title, body})
+   
     
-    res.json(result)
+    try {
+
+        const result = await noteServices.addNote({title, body})
+        res.status(200)
+        .json({
+            status: 'success',
+            message: 'note creted successfully',
+            note: result
+        })
+
+    } catch(e) {
+        res.status(400)
+        .json({
+            status: 'fail',
+            message: e.message
+        })
+    }
+    
 
 });
 
+
 route.get('/notes', async (req, res) => {
 
-    const result = await noteServices.getNotes();
-    res.json(result)
+    try {
+
+        const notes = await noteServices.getNotes();
+        res.json({
+            status: 'success',
+            data: {notes}
+        })
+
+    } catch (e) {
+        res.status(404)
+        .json({
+            error: {
+                code: 404,
+                status: 'not found',
+                message: e.message
+            }
+        })
+    }
 
 });
 
