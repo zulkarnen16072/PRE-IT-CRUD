@@ -1,6 +1,5 @@
 const { nanoid } = require("nanoid");
-const { renameFunction } = require("node-pg-migrate/dist/operations/functions");
-const { Pool, DatabaseError } = require("pg");
+const { Pool } = require("pg");
 
 class NoteServices {
     
@@ -65,7 +64,7 @@ class NoteServices {
 
         const result = await this._poll.query(query);
 
-        if (!result.rows.length) {
+        if (!result.rowCount) {
             throw new Error(`Note tidak dapat diubah, ${noteID} tidak ditemukan`)
         }
 
