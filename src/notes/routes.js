@@ -3,43 +3,20 @@ const route = express.Router();
 const NoteServices = require('./note.services') 
 const noteServices = new NoteServices();
 
-route.post('/notes', async(req, res) => {
-
-    const {title, body} = req.body;
-   
-    
-    try {
-
-        const result = await noteServices.addNote({title, body})
-        res.status(200)
-        .json({
-            status: 'success',
-            message: 'note creted successfully',
-            note: result
-        })
-
-    } catch(e) {
-        res.status(400)
-        .json({
-            status: 'fail',
-            message: e.message
-        })
-    }
-    
-
-});
 
 
 route.get('/notes', async (req, res) => {
 
     try {
-
+        
         const notes = await noteServices.getNotes();
         res.json({
             status: 'success',
-            data: {notes}
+            data: {
+                notes
+            }
         })
-
+        
     } catch (e) {
         res.status(404)
         .json({
@@ -50,18 +27,18 @@ route.get('/notes', async (req, res) => {
             }
         })
     }
-
+    
 });
 
 
 route.get('/notes/:notesID', async (req, res) => {
 
-    const noteID = req.params.notesID;
+    const id = req.params.notesID;
 
     try {
 
-        const noteByID = await noteServices.getNotesByID(noteID);
-        res.json(noteByID)
+        const noteID = await noteServices.getNotesByID(id);
+        res.json(noteID)
 
     } catch(e) {
 
@@ -76,6 +53,34 @@ route.get('/notes/:notesID', async (req, res) => {
 
     }
 });
+
+
+route.post('/notes', async(req, res) => {
+
+    const {title, body} = req.body;
+   
+    
+    try {
+
+        const result = await noteServices.addNote({title, body})
+        res.status(200)
+        .json({
+            status: 'success',
+            message: 'note created successfully',
+            data: result
+        })
+
+    } catch(e) {
+        res.status(400)
+        .json({
+            status: 'fail',
+            message: e.message
+        })
+    }
+    
+
+});
+
 
 
 
