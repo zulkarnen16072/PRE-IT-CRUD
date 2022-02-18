@@ -37,18 +37,21 @@ route.get('/notes/:notesID', async (req, res) => {
 
     try {
 
-        const noteID = await noteServices.getNotesByID(id);
-        res.json(noteID)
+        const note = await noteServices.getNotesByID(id);
+        res.json({
+            status: 'success',
+            data: note
+        })
 
     } catch(e) {
 
         res.status(404)
-        res.json({
-            
-            code: 404,
-            error: 'not found',
-            message: e.message,
-
+        .json({ 
+            error: {
+                code: 404,
+                status: 'not found',
+                message: e.message,
+            }  
         })
 
     }
