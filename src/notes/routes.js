@@ -119,9 +119,9 @@ route.delete('/notes/:noteID', async(req, res) => {
 
     try {
         
-        const result = await noteServices.deleteNoteByID(noteID);
-        console.info(result)
-        res.json({message: `note dengan judul ${result} berhasil dihapus`})
+        const titleResult = await noteServices.deleteNoteByID(noteID);
+        console.info(titleResult)
+        res.json({message: `note dengan judul ${titleResult} berhasil dihapus`})
 
     } catch (e) {
 
