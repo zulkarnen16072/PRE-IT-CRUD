@@ -7,4 +7,4 @@ const validationBodyNotes = Joi.object({
 })
 
 
-module.exports = validationBodyNotes();
+module.exports = validationBodyNotes;
