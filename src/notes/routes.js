@@ -1,8 +1,8 @@
 const express = require('express');
+const validationBodyNotes = require('../utils/validationUtil');
 const route = express.Router();
 const NoteServices = require('./note.services') 
 const noteServices = new NoteServices();
-
 
 
 route.get('/notes', async (req, res) => {
@@ -34,6 +34,7 @@ route.get('/notes', async (req, res) => {
 route.get('/notes/:notesID', async (req, res) => {
 
     const id = req.params.notesID;
+ 
 
     try {
 
@@ -59,13 +60,11 @@ route.get('/notes/:notesID', async (req, res) => {
 
 
 route.post('/notes', async(req, res) => {
-
-    const {title, body} = req.body;
-   
-    
+     
     try {
 
-        const result = await noteServices.addNote({title, body})
+        await validationBodyNotes.validateAsync(req.body);
+        const result = await noteServices.addNote(req.body)
         res.status(200)
         .json({
             status: 'success',
@@ -90,11 +89,25 @@ route.post('/notes', async(req, res) => {
 route.put('/notes/:id', async (req, res) => {
 
     const noteID = req.params.id;
-    const {title, body} = req.body;
 
-    const result = await noteServices.updateNoteByID(noteID, {title, body})
+    try {
+        await validationBodyNotes.validateAsync(req.body);
+        await noteServices.updateNoteByID(noteID, req.body)
+        res.json({
+            status: 'success',
+            message: 'notes updated successfully',
+        });
+    } catch (e) {
+        res.status(400)
+        .json({ 
+            error: {
+                code: 400,
+                status: 'bad request',
+                message: e.message,
+            }  
+        })
+    } 
     
-    res.json(result);
 
 });
 
