@@ -7,8 +7,6 @@ const host = process.env.HOST
 const bodyParser = require('body-parser');
 const notesRoute = require('./src/notes/routes'); 
 
-const fileUpload = require('express-fileupload')
-
 const multer = require('multer');
 
 app.use(bodyParser.json());
@@ -33,23 +31,14 @@ const fileStorage = multer.diskStorage({
 })
 
 
-app.use(multer({storage: fileStorage}).single('image'))
-
-const fileFilter = (req, file, cb) => {
-  const condition = ['image/jpg', 'image/png', 'image/jpeg']
-  
-  if (condition.includes(file.mimeType)) {
-    cb(null, true)
-  }
-
-  cb(null, false) 
-  return cb(new TypeError('extension file salah bro'))
-  
-}
 
 
 
-const upload = multer({storage: fileStorage, fileFilter})
+
+
+
+
+
 
 
 
@@ -70,7 +59,7 @@ function responseJSONSuccess(message, response, code=200, status='OK')  {
 
 function responseJSON(message, response, code=400, status='bad request')  {
 
-  return response
+   return response
   .status(400)
   .json({
     error: {
@@ -82,16 +71,116 @@ function responseJSON(message, response, code=400, status='bad request')  {
 
 }
 
+
+const isFile = (file) => {
+  file = {};
+  if (file === undefined || file === null || file === '') {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+
+
+
+const fileFilter = (req, file, cb) => {
+
+ 
+  const condition = ['image/jpeg', 'image/png', 'image/jpeg', 'image/JPG']
+  if (condition.includes(file.mimeType)) {
+    cb(null, true)
+  } else {
+    cb(null, false) 
+    cb(new RangeError('Only .png, .jpg and .jpeg format allowed!'))
+  }
+
+}
+
+const upload = multer({
+  storage: fileStorage,
+  fileFilter: fileFilter
+}).single('image')
+
+
+
+const up = multer({
+  storage: fileStorage,
+
+  fileFilter: (req, file, cb) => {
+
+
+
+
+
+
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpeg" ||file.mimetype == "image/jpg" ) {
+        cb(null, true)
+      } else {
+        cb(null, false);
+        cb(new TypeError('Only .png, .jpg and .jpeg format allowed!'));
+      }      
+  
+
+  }
+
+    
+}).single('image');
+
+
+
+app.post('/uploads/test', (req, res, next) => {
+
+  console.info(req.body.length)
+
+  
+
+
+      
+  up(req, res, function (err) {
+
+
+    
+      if (err instanceof multer.MulterError) {
+        return responseJSON(err.message, res)
+      } else if (err instanceof TypeError) {
+        return responseJSON(err.message, res)
+      } else if (err instanceof RangeError) {
+        return responseJSON(err.message, res)      
+      } else if (err) {
+        return responseJSON('error pokokna', res)
+      }
+    
+      
+      responseJSONSuccess('berhasil hore', res)
+  
+
+    
+
+  
+  })
+  
+
+
+})
+
+
+
 app.post('/uploads' ,(req, res) => {
+
+  
   
   console.info(req.file)
+  console.info(req.file)
+
 
   if (!req.file) {
     responseJSON('file requires', res);
-  } else {
+  } 
+  
+ 
     responseJSONSuccess('uploaded successfully', res, 200, 'OK')
-  }
-
+ 
 })
 
 
