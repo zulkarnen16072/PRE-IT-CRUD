@@ -20,6 +20,7 @@ app.use(
 app.use(notesRoute);
 
 
+
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
@@ -29,17 +30,6 @@ const fileStorage = multer.diskStorage({
   }
 
 })
-
-
-
-
-
-
-
-
-
-
-
 
 
 function responseJSONSuccess(message, response, code=200, status='OK')  {
@@ -72,21 +62,9 @@ function responseJSON(message, response, code=400, status='bad request')  {
 }
 
 
-const isFile = (file) => {
-  file = {};
-  if (file === undefined || file === null || file === '') {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-
-
-
 const fileFilter = (req, file, cb) => {
 
- 
+
   const condition = ['image/jpeg', 'image/png', 'image/jpeg', 'image/JPG']
   if (condition.includes(file.mimeType)) {
     cb(null, true)
@@ -109,38 +87,22 @@ const up = multer({
 
   fileFilter: (req, file, cb) => {
 
-
-
-
-
-
       if (file.mimetype == "image/png" || file.mimetype == "image/jpeg" ||file.mimetype == "image/jpg" ) {
         cb(null, true)
       } else {
         cb(null, false);
         cb(new TypeError('Only .png, .jpg and .jpeg format allowed!'));
       }      
-  
+    }
 
-  }
-
-    
-}).single('image');
+  }).single('image');
 
 
 
-app.post('/uploads/test', (req, res, next) => {
+app.post('/uploads/', (req, res, next) => {
 
-  console.info(req.body.length)
-
-  
-
-
-      
   up(req, res, function (err) {
 
-
-    
       if (err instanceof multer.MulterError) {
         return responseJSON(err.message, res)
       } else if (err instanceof TypeError) {
@@ -150,38 +112,13 @@ app.post('/uploads/test', (req, res, next) => {
       } else if (err) {
         return responseJSON('error pokokna', res)
       }
-    
-      
+  
       responseJSONSuccess('berhasil hore', res)
   
-
-    
-
-  
   })
-  
-
 
 })
 
-
-
-app.post('/uploads' ,(req, res) => {
-
-  
-  
-  console.info(req.file)
-  console.info(req.file)
-
-
-  if (!req.file) {
-    responseJSON('file requires', res);
-  } 
-  
- 
-    responseJSONSuccess('uploaded successfully', res, 200, 'OK')
- 
-})
 
 
 app.get('/', (req, res) => {
