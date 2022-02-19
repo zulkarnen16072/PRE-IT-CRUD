@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const notesRoute = require('./src/notes/routes'); 
 
 const multer = require('multer');
+const { object } = require('joi');
 
 app.use(bodyParser.json());
 
@@ -87,6 +88,12 @@ const up = multer({
 
   fileFilter: (req, file, cb) => {
 
+    console.info(typeof file)
+
+    if (typeof file !== 'object' && typeof file === undefined) {
+      console.info('halo')
+    }
+
       if (file.mimetype == "image/png" || file.mimetype == "image/jpeg" ||file.mimetype == "image/jpg" ) {
         cb(null, true)
       } else {
@@ -101,7 +108,22 @@ const up = multer({
 
 app.post('/uploads/', (req, res, next) => {
 
+  // console.info(req.file.originalname)
+
+  // if (req.file === undefined && req.file !== Object) {
+  //   return responseJSON('file image requires', res)
+  // }
+
   up(req, res, function (err) {
+    console.info( "Error: "+ err)
+    console.error(typeof req.file === undefined)
+
+    console.info(typeof object)
+
+    if(typeof req.file === undefined || req.file === undefined) {
+      responseJSON('file image requires', res)
+      return false;
+    }
 
       if (err instanceof multer.MulterError) {
         return responseJSON(err.message, res)
