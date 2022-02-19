@@ -11,8 +11,6 @@ const fileUpload = require('express-fileupload')
 
 const multer = require('multer');
 
-app.use(fileUpload())
-
 app.use(bodyParser.json());
 
 app.use(
@@ -31,10 +29,11 @@ const fileStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     cb(null, new Date().getTime() + '-' + file.originalname )
   }
+
 })
 
 
-
+app.use(multer({storage: fileStorage}).single('image'))
 
 const fileFilter = (req, file, cb) => {
   const condition = ['image/jpg', 'image/png', 'image/jpeg']
@@ -50,40 +49,23 @@ const fileFilter = (req, file, cb) => {
 
 
 
-
-
-// const upload = multer({
-//   storage: fileStorage,
-//   fileFilter
-// }).single('image')
-
-
-// try {
-//   app.use(upload)
-// } catch (e) {
-//   console.info(e)
-// }
+const upload = multer({storage: fileStorage, fileFilter})
 
 
 
-const resSuccess = (req, res) => {
-  res.json({
-    status: 'successfully',
-    data: req.file
-  }) 
-} 
+function responseJSONSuccess(message, response, code=200, status='OK')  {
 
-
-const resError = (res, err) => {
-  res.status(400).json({
-    error: {
-      code: 400,
-      status: 'bad request',
-      message: err.message
-    } 
+  return response
+  .status(200)
+  .json({
+    success: {
+      code,
+      status,
+      message,
+    }
   })
-}
 
+}
 
 
 function responseJSON(message, response, code=400, status='bad request')  {
@@ -93,46 +75,30 @@ function responseJSON(message, response, code=400, status='bad request')  {
   .json({
     error: {
       code,
-      status: 'bad request',
+      status,
       message,
     }
   })
 
-  //response.end()
-
 }
 
-
-
-app.post('/uploads/test', (req, res) => {
+app.post('/uploads' ,(req, res) => {
   
-  console.info(req.files)
+  console.info(req.file)
 
-  if (!req.files) {
+  if (!req.file) {
     responseJSON('file requires', res);
-    return;
+  } else {
+    responseJSONSuccess('uploaded successfully', res, 200, 'OK')
   }
 
-  // if (req.files) {
-  //   console.info('hi')
-  // } else {
-  //   console.info('hmm');
-  // }
-  
-  
-    
-
-
- 
-  
 })
-
-  
 
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+
 
 app.listen(port, () => {
   console.log(`Example app listening on http://${host}:${port}`)
