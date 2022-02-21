@@ -9,6 +9,7 @@ const notesRoute = require('./src/notes/routes');
 
 const multer = require('multer');
 const { object } = require('joi');
+const { json } = require('express');
 
 app.use(bodyParser.json());
 
@@ -19,6 +20,7 @@ app.use(
 )
 
 app.use(notesRoute);
+
 
 
 
@@ -39,26 +41,33 @@ function responseJSONSuccess(message, response, code=200, status='OK')  {
   .status(200)
   .json({
     success: {
-      code,
       status,
-      message,
+      code,
+      message
     }
   })
 
 }
 
 
-function responseJSON(message, response, code=400, status='bad request')  {
+function responseJSON({message, res, status=400, error='bad request', detail=''})  {
 
-   return response
-  .status(400)
-  .json({
-    error: {
-      code,
-      status,
-      message,
-    }
+  console.info(`Status bug ${status}`)
+ 
+  const errorValues = Object.assign({}, 
+    status ? {status}  : null,
+    error ? {error}  : null,
+    message ? {message}  : null,
+    detail ? {detail}: null
+  )
+
+
+  return res.status(400).json({
+    errors: errorValues
   })
+
+
+  
 
 }
 
@@ -83,18 +92,15 @@ const upload = multer({
 
 
 
+
+
+
 const up = multer({
   storage: fileStorage,
 
   fileFilter: (req, file, cb) => {
-
-    console.info(typeof file)
-
-    if (typeof file !== 'object' && typeof file === undefined) {
-      console.info('halo')
-    }
-
-      if (file.mimetype == "image/png" || file.mimetype == "image/jpeg" ||file.mimetype == "image/jpg" ) {
+   
+      if (file.mimetype == "image/png" || file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" ) {
         cb(null, true)
       } else {
         cb(null, false);
@@ -106,40 +112,57 @@ const up = multer({
 
 
 
-app.post('/uploads/', (req, res, next) => {
 
-  // console.info(req.file.originalname)
 
-  // if (req.file === undefined && req.file !== Object) {
-  //   return responseJSON('file image requires', res)
-  // }
+  const isNaNFile = (err, req) => {
 
-  up(req, res, function (err) {
-    console.info( "Error: "+ err)
-    console.error(typeof req.file === undefined)
-
-    console.info(typeof object)
-
-    if(typeof req.file === undefined || req.file === undefined) {
-      responseJSON('file image requires', res)
+    if (!(typeof err === 'object') && req.file === undefined) {
+      return true;
+    } else {
       return false;
     }
 
-      if (err instanceof multer.MulterError) {
-        return responseJSON(err.message, res)
-      } else if (err instanceof TypeError) {
-        return responseJSON(err.message, res)
-      } else if (err instanceof RangeError) {
-        return responseJSON(err.message, res)      
-      } else if (err) {
-        return responseJSON('error pokokna', res)
-      }
+  }
+
+
+
+app.post('/uploads', (req, res, next) => {
+
+  up(req, res, function (err) {
+
+    if (isNaNFile(err, req)) {
+      return next()     
+    }
+    
+    if (err instanceof multer.MulterError) {
+      return responseJSON({message :'no response adalah sebuah response', res:res, detail: 'ensure you sadar diri'})
+    } else if (err instanceof TypeError) {
+      return responseJSON({status: 415, error: 'unsupported media type', message :'extension must be .png, jpeg, jpg', res:res, detail: err.message})
+    } else if (err instanceof RangeError) {
+      return responseJSON({message :err.message, res:res})      
+    } else if (err) {return responseJSON({message: 'error pokokna', res})
   
-      responseJSONSuccess('berhasil hore', res)
+  }
   
+  responseJSONSuccess('berhasil hore', res)
+    
+
   })
 
+ 
+
+}, (req, res) => {
+  res.status(400).json(responseJSON({
+    status: 400,
+    error: 'bad request',
+    message: 'no response adalah sebuah response',
+    res,
+    detail: 'ensure your self-aware and have connection'
+  }))
 })
+
+
+
 
 
 
