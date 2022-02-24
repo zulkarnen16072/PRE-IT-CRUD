@@ -7,15 +7,15 @@ class NoteServices {
         this._poll = new Pool();
     }
 
-    async addNote({title, body}) {
+    async addNote({title, body, tag_id}) {
         
         const id = `note-${nanoid(16)}`;
         const createdAt = new Date().toLocaleString("id-ID");;
         const updatedAt = createdAt;
 
         const query = {
-            text: 'INSERT INTO notes VALUES($1, $2, $3, $4, $5) RETURNING id',
-            values: [id, title, body, createdAt, updatedAt]
+            text: 'INSERT INTO notes VALUES($1, $2, $3, $4, $5, $6) RETURNING id',
+            values: [id, title, body, createdAt, updatedAt, tag_id]
         }
 
         const result = await this._poll.query(query);
