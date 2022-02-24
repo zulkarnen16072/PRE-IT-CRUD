@@ -1,4 +1,5 @@
 const { Pool } = require("pg");
+const { nanoid } = require("nanoid");
 
 class TagsServices {
     constructor() {
@@ -20,14 +21,18 @@ class TagsServices {
     }
 
 
-    async getTags() {
+    async addTags({name}) {
+
+        const id = `tags-${nanoid(5)}`;
+
         try {
 
-            return await this.pool.query('SELECT * FROM Tags');
 
+            const r =  await this.pool.query('INSERT INTO tags VALUES($1, $2) RETURNING tag_id', [id, name]);
+            return  r.rows[0].tag_id
 
         } catch(e) {
-
+            console.log(e)
         }
     }
 
