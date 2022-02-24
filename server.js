@@ -10,6 +10,10 @@ const notesRoute = require('./src/notes/routes');
 const multer = require('multer');
 const { object } = require('joi');
 const { json } = require('express');
+const routeTags = require('./src/tags/tag.routes');
+
+
+
 
 app.use(bodyParser.json());
 
@@ -19,7 +23,7 @@ app.use(
   })
 )
 
-app.use(notesRoute);
+app.use(notesRoute).use(routeTags);
 
 
 
