@@ -29,14 +29,16 @@ class NoteServices {
     }
 
     async getNotes() {
-        const result = await this._poll.query('SELECT * FROM notes');
+        const result = await this._poll.query(`SELECT notes.*, tags.name AS tag FROM notes JOIN
+            Tags ON notes.tag_id = Tags.tag_id`);
         return result.rows;
     }
 
 
     async getNotesByID(noteID) {
         const query = {
-            text: 'SELECT * FROM notes WHERE id = $1',
+            text: `SELECT notes.*, tags.name AS tag FROM notes JOIN
+            Tags ON notes.tag_id = Tags.tag_id WHERE notes.id = $1`,
             values: [noteID]
         }
 
