@@ -63,7 +63,7 @@ route.post('/notes', async(req, res) => {
      
     try {
 
-        await validationBodyNotes.validateAsync(req.body);
+        // await validationBodyNotes.validateAsync(req.body);
         const result = await noteServices.addNote(req.body)
         res.status(200)
         .json({
@@ -75,7 +75,7 @@ route.post('/notes', async(req, res) => {
     } catch(e) {
         res.status(400)
         .json({
-            status: 'fail',
+            status: 'failure',
             message: e.message
         })
     }
