@@ -55,6 +55,30 @@ class NoteServices {
     }
 
 
+
+    async getNoteByTagID(tagID) {
+        const query = {
+            text: `SELECT Tags.*, Notes.id, Notes.title FROM Tags 
+            JOIN Notes ON Tags.tag_id = Notes.tag_id WHERE Tags.tag_id = $1`,
+            values: [tagID]
+        }
+
+        const result = await (await this._poll.query(query));
+
+
+        console.info(result)
+        if (!result) {
+
+            throw new Error('Note tidak ditemukan')
+
+        }
+
+        return result;
+
+    }
+    
+
+
     async updateNoteByID(noteID, {title, body}) {
 
         const updatedAt = new Date().toLocaleString("id-ID");
