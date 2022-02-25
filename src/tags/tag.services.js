@@ -26,10 +26,21 @@ class TagsServices {
         const id = `tags-${nanoid(5)}`;
 
         try {
+            return await (await this.pool.query('INSERT INTO Tags VALUES ($1, $2) RETURNING tag_id', [id, name])).rows[0];
+
+        } catch(e) {
+            console.log(e)
+        }
+    }
 
 
-            const r =  await this.pool.query('INSERT INTO tags VALUES($1, $2) RETURNING tag_id', [id, name]);
-            return  r.rows[0].tag_id
+
+    async getTagById(id) {
+
+        try {
+
+            const r =  await this.pool.query('SELECT * FROM Tags WHERE tag_id = $1', [id]);
+            return  r.rows[0]
 
         } catch(e) {
             console.log(e)
